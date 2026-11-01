@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070f1e">
+  <title>Payanam Junction — Staff Operations Desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <a class="brand" href="/staff-dashboard.html">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-copy"><strong>PAYANAM</strong><small>STAFF OPERATIONS DESK</small></span>
+    </a>
+    <div class="header-user-meta">
+      <div class="user-badge">
+        <span id="headerUserName">Staff</span>
+        <span class="role-tag role-staff" id="headerUserRole">STAFF</span>
+      </div>
+      <button class="btn-logout" id="logoutBtn" type="button">Logout ⎋</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="dashboard-container">
+    <div class="page-intro">
+      <div>
+        <h1>Station Operations & Platform Management</h1>
+        <p>Control train arrivals/departures, allocate platforms, manage delays, and oversee reservations.</p>
+      </div>
+      <div>
+        <button class="btn-secondary btn-sm" id="refreshBtn" type="button">Refresh Board ↻</button>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <section class="stats-grid" aria-label="Staff Overview">
+      <article class="stat-card">
+        <div class="stat-title">Platform Queue</div>
+        <div class="stat-value" id="statQueueCount" style="color: var(--warning);">0</div>
+        <div class="stat-subtitle">Arrival requests waiting</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">Active Timetable</div>
+        <div class="stat-value" id="statTimetableCount" style="color: var(--primary);">0</div>
+        <div class="stat-subtitle">Allocated platform slots</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">Passenger Bookings</div>
+        <div class="stat-value" id="statBookingsCount">0</div>
+        <div class="stat-subtitle">Confirmed & waitlisted</div>
+      </article>
+    </section>
+
+    <!-- Train Controls: Delay & Priority -->
+    <section class="panel" style="margin-bottom: 2rem;">
+      <div class="panel-header">
+        <h2 class="panel-title">Train Delays & Priority</h2>
+        <span class="badge badge-warning">Conflict Checked</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="controlTrainSelect">Select Train</label>
+          <select id="controlTrainSelect" required>
+            <option value="">Choose a train…</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="delayInput">Delay (Minutes)</label>
+          <input id="delayInput" type="number" min="1" max="300" value="15">
+        </div>
+        <div>
+          <button class="btn-secondary btn-full" id="applyDelayBtn" type="button">
+            Apply Delay
+          </button>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="prioritySelect">Priority Level</label>
+          <select id="prioritySelect">
+            <option value="1">1 (Standard)</option>
+            <option value="2">2 (Elevated)</option>
+            <option value="3">3 (High)</option>
+            <option value="4">4 (Urgent)</option>
+            <option value="5">5 (Highest)</option>
+          </select>
+        </div>
+        <div>
+          <button class="btn-secondary btn-full" id="applyPriorityBtn" type="button">
+            Set Priority
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Platform Allocation & Queues -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Platform Allocation Status</h2>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn-primary btn-sm" id="allocatePlatformBtn" type="button">
+            ⚡ Allocate Next Platform
+          </button>
+        </div>
+      </div>
+
+      <!-- Platform Cards (P1, P2, P3) -->
+      <div class="stats-grid" id="platformCards" style="margin-bottom: 1.5rem;">
+        <div class="empty-box">Loading platform tracks…</div>
+      </div>
+
+      <!-- Queue an Arrival Form & Request Queue -->
+      <div class="grid-2col">
+        <!-- Request Platform Form -->
+        <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-main);">Queue Platform Request</h3>
+          <form id="requestPlatformForm">
+            <div class="form-group">
+              <label for="reqTrainSelect">Train Service</label>
+              <select id="reqTrainSelect" name="trainId" required>
+                <option value="">Select train…</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reqTypeSelect">Priority Category</label>
+              <select id="reqTypeSelect" name="requestType">
+                <option value="SCHEDULED">Scheduled Arrival (Standard)</option>
+                <option value="CONNECTION">Connection Arrival (High)</option>
+                <option value="EMERGENCY">Emergency Arrival (Urgent)</option>
+              </select>
+            </div>
+            <button class="btn-secondary btn-full" type="submit">
+              + Add to Queue
+            </button>
+          </form>
+        </div>
+
+        <!-- Waiting Queue List -->
+        <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+            <h3 style="font-size: 0.95rem; color: var(--text-main);">Pending Request Queue</h3>
+            <span class="badge badge-warning" id="queueBadge">0 queued</span>
+          </div>
+          <div id="queueListContainer" style="max-height: 200px; overflow-y: auto;">
+            <div class="empty-box" style="padding: 1.5rem 0;">No platform requests in queue.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Platform Timetable & Operations -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Platform Timetable & Action Control</h2>
+        <span style="font-size: 0.8rem; color: var(--text-dim);" id="timetableInfo"></span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Train / Length</th>
+              <th>Arrival</th>
+              <th>Departure</th>
+              <th>Platform</th>
+              <th>Clearance</th>
+              <th>Status</th>
+              <th>Operational Action</th>
+            </tr>
+          </thead>
+          <tbody id="timetableRows">
+            <tr><td colspan="7" class="empty-box">Loading platform timetable…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Passenger Bookings Overview -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Passenger Bookings Master List</h2>
+        <span class="badge badge-info" id="allBookingsBadge">0 active</span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket #</th>
+              <th>Passenger</th>
+              <th>Train</th>
+              <th>Status</th>
+              <th>Staff Action</th>
+            </tr>
+          </thead>
+          <tbody id="allBookingRows">
+            <tr><td colspan="5" class="empty-box">Loading passenger bookings…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/auth.js"></script>
+  <script src="/staff.js"></script>
+</body>
+</html>

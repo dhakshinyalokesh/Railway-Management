@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070f1e">
+  <title>Payanam Junction — System Administrator Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <a class="brand" href="/admin-dashboard.html">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-copy"><strong>PAYANAM</strong><small>ADMINISTRATOR CONTROL</small></span>
+    </a>
+    <div class="header-user-meta">
+      <div class="user-badge">
+        <span id="headerUserName">Admin</span>
+        <span class="role-tag role-admin" id="headerUserRole">ADMIN</span>
+      </div>
+      <button class="btn-logout" id="logoutBtn" type="button">Logout ⎋</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="dashboard-container">
+    <div class="page-intro">
+      <div>
+        <h1>Central Station Administration</h1>
+        <p>Manage system users, train services, live platform allocation, and all reservations.</p>
+      </div>
+      <div>
+        <button class="btn-secondary btn-sm" id="refreshBtn" type="button">Refresh System ↻</button>
+      </div>
+    </div>
+
+    <!-- KPI Stats Grid -->
+    <section class="stats-grid" aria-label="System Metrics">
+      <article class="stat-card">
+        <div class="stat-title">System Users</div>
+        <div class="stat-value" id="statTotalUsers" style="color: #c084fc;">0</div>
+        <div class="stat-subtitle">Passengers, staff & admins</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">Train Services</div>
+        <div class="stat-value" id="statTotalTrains" style="color: var(--primary);">0</div>
+        <div class="stat-subtitle">Configured routes</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">Total Bookings</div>
+        <div class="stat-value" id="statTotalBookings">0</div>
+        <div class="stat-subtitle">All active tickets</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">Confirmed Seats</div>
+        <div class="stat-value" id="statConfirmedSeats" style="color: var(--success);">0</div>
+        <div class="stat-subtitle" id="statWaitingSubtitle">0 in waitlist</div>
+      </article>
+    </section>
+
+    <!-- SECTION 1: USER MANAGEMENT -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">👥 User Management</h2>
+        <span class="badge badge-info" id="userCountBadge">0 registered</span>
+      </div>
+
+      <div class="grid-2col" style="align-items: start;">
+        <!-- Registered Users Table -->
+        <div class="table-responsive" style="margin-bottom: 0;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Role</th>
+                <th>Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="userRows">
+              <tr><td colspan="6" class="empty-box">Loading user database…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Add New User Form -->
+        <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+          <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--text-main);">Create New Account</h3>
+          <div class="alert" id="createUserAlert" role="alert"></div>
+          <form id="createUserForm">
+            <div class="form-group">
+              <label for="newUsername">Username</label>
+              <input id="newUsername" name="username" type="text" placeholder="e.g. staff_member" required>
+            </div>
+            <div class="form-group">
+              <label for="newEmail">Email</label>
+              <input id="newEmail" name="email" type="email" placeholder="e.g. member@railway.com" required>
+            </div>
+            <div class="form-group">
+              <label for="newFullName">Full Name</label>
+              <input id="newFullName" name="fullName" type="text" placeholder="e.g. John Operator" required>
+            </div>
+            <div class="form-group">
+              <label for="newPassword">Password</label>
+              <div class="input-group">
+                <input id="newPassword" name="password" type="password" minlength="6" placeholder="Min 6 characters" required>
+                <button type="button" class="password-toggle-btn" data-target="newPassword">👁 Show</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="newRole">System Role</label>
+              <select id="newRole" name="role" required>
+                <option value="STAFF">Staff (Operations & Platform Desk)</option>
+                <option value="PASSENGER">Passenger (Bookings Only)</option>
+                <option value="ADMIN">Administrator (Full Access)</option>
+              </select>
+            </div>
+            <button class="btn-primary btn-full" type="submit" id="createUserSubmitBtn">
+              Create User Account <span>+</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: TRAIN MANAGEMENT -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">🚆 Train Service Management</h2>
+        <span class="badge badge-info" id="trainCountBadge">0 services</span>
+      </div>
+
+      <div class="table-responsive" style="margin-bottom: 0;">
+        <table>
+          <thead>
+            <tr>
+              <th>Train</th>
+              <th>Arrival</th>
+              <th>Departure</th>
+              <th>Length</th>
+              <th>Priority</th>
+              <th>Capacity</th>
+            </tr>
+          </thead>
+          <tbody id="trainMasterRows">
+            <tr><td colspan="6" class="empty-box">Loading trains…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 3: PLATFORM ALLOCATION OVERVIEW -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">🚉 Station Platform Allocation</h2>
+        <span style="font-family: var(--font-mono); font-size: 0.85rem;" id="adminClockDisplay">Time: 00:00</span>
+      </div>
+      <div class="stats-grid" id="adminPlatformCards" style="margin-bottom: 1rem;">
+        <div class="empty-box">Loading platforms…</div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Train</th>
+              <th>Platform</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="adminTimetableRows">
+            <tr><td colspan="5" class="empty-box">No platform reservations.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ALL BOOKINGS OVERSIGHT -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">🎫 All Passenger Reservations</h2>
+        <span class="badge badge-info" id="adminBookingsBadge">0 bookings</span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Reservation #</th>
+              <th>Passenger</th>
+              <th>Train</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminBookingRows">
+            <tr><td colspan="5" class="empty-box">Loading bookings…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/auth.js"></script>
+  <script src="/admin.js"></script>
+</body>
+</html>

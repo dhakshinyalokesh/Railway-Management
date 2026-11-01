@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Payanam Junction — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body class="auth-wrapper">
+  <main class="auth-card">
+    <div style="text-align: center; margin-bottom: 1.75rem;">
+      <a class="brand" href="/" style="display: inline-flex; justify-content: center; margin-bottom: 0.5rem;">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-copy" style="text-align: left;"><strong>PAYANAM</strong><small>JUNCTION RAIL</small></span>
+      </a>
+      <p class="auth-subtitle">Railway Management System Portal</p>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" id="tabLogin" type="button" role="tab">Sign In</button>
+      <button class="auth-tab" id="tabRegister" type="button" role="tab">Passenger Register</button>
+    </div>
+
+    <!-- Login Form with Browser Autofill Enabled -->
+    <form id="loginForm" method="post" action="/api/auth/login" autocomplete="on">
+      <div class="alert alert-error" id="loginAlert" role="alert"></div>
+
+      <div class="form-group">
+        <label for="loginUsername">Username or Email</label>
+        <div class="input-group">
+          <input id="loginUsername" name="username" type="text" placeholder="Enter username or email" required autocomplete="username email">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <div class="input-group">
+          <input id="loginPassword" name="password" type="password" placeholder="Enter password" required autocomplete="current-password">
+          <button type="button" class="password-toggle-btn" data-target="loginPassword" aria-label="Toggle password visibility">👁 Show</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-full" id="loginSubmitBtn" style="margin-top: 1.25rem;">
+        Sign In <span>→</span>
+      </button>
+    </form>
+
+    <!-- Passenger Registration Form with Browser Autofill Enabled -->
+    <form id="registerForm" method="post" action="/api/auth/register" autocomplete="on" style="display: none;">
+      <div class="alert" id="regAlert" role="alert"></div>
+
+      <div class="form-group">
+        <label for="regFullName">Full Name</label>
+        <div class="input-group">
+          <input id="regFullName" name="fullName" type="text" placeholder="e.g. Jane Doe" required autocomplete="name">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regUsername">Username</label>
+        <div class="input-group">
+          <input id="regUsername" name="username" type="text" placeholder="Choose a username" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regEmail">Email Address</label>
+        <div class="input-group">
+          <input id="regEmail" name="email" type="email" placeholder="e.g. jane@example.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="regPassword">Password (min 6 characters)</label>
+        <div class="input-group">
+          <input id="regPassword" name="password" type="password" minlength="6" placeholder="Create a password" required autocomplete="new-password">
+          <button type="button" class="password-toggle-btn" data-target="regPassword" aria-label="Toggle password visibility">👁 Show</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-full" id="regSubmitBtn" style="margin-top: 1.25rem;">
+        Create Passenger Account <span>→</span>
+      </button>
+    </form>
+  </main>
+
+  <script src="/auth.js"></script>
+  <script>
+    // Initialize toggles
+    initPasswordToggles();
+
+    // Check if user is already logged in
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated && data.user) {
+            redirectToDashboard(data.user.role);
+          }
+        }
+      } catch (ignored) {}
+    })();
+
+    function redirectToDashboard(role) {
+      if (role === 'ADMIN') window.location.href = '/admin-dashboard.html';
+      else if (role === 'STAFF') window.location.href = '/staff-dashboard.html';
+      else window.location.href = '/passenger-dashboard.html';
+    }
+
+    // Tab switching
+    const tabLogin = document.querySelector('#tabLogin');
+    const tabRegister = document.querySelector('#tabRegister');
+    const loginForm = document.querySelector('#loginForm');
+    const registerForm = document.querySelector('#registerForm');
+
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      hideAlerts();
+    });
+
+    tabRegister.addEventListener('click', () => {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      registerForm.style.display = 'block';
+      loginForm.style.display = 'none';
+      hideAlerts();
+    });
+
+    function hideAlerts() {
+      document.querySelector('#loginAlert').className = 'alert';
+      document.querySelector('#regAlert').className = 'alert';
+    }
+
+    // Login Form Submission
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alert = document.querySelector('#loginAlert');
+      const submitBtn = document.querySelector('#loginSubmitBtn');
+      alert.className = 'alert';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in…';
+
+      try {
+        const formData = new FormData(loginForm);
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: new URLSearchParams(formData)
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert.textContent = data.error || 'Failed to sign in';
+          alert.className = 'alert alert-error show';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign In →';
+          return;
+        }
+
+        // Store user in sessionStorage for convenience
+        sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+        redirectToDashboard(data.user.role);
+      } catch (err) {
+        alert.textContent = 'Connection error: Is the Java server running?';
+        alert.className = 'alert alert-error show';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In →';
+      }
+    });
+
+    // Registration Form Submission
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alert = document.querySelector('#regAlert');
+      const submitBtn = document.querySelector('#regSubmitBtn');
+      alert.className = 'alert';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account…';
+
+      try {
+        const formData = new FormData(registerForm);
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: new URLSearchParams(formData)
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert.textContent = data.error || 'Failed to register account';
+          alert.className = 'alert alert-error show';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Passenger Account →';
+          return;
+        }
+
+        if (data.user) {
+          sessionStorage.setItem('currentUser', JSON.stringify(data.user));
+          redirectToDashboard('PASSENGER');
+        } else {
+          alert.textContent = data.message || 'Registration successful! You can now sign in.';
+          alert.className = 'alert alert-success show';
+          registerForm.reset();
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Passenger Account →';
+          setTimeout(() => tabLogin.click(), 1500);
+        }
+      } catch (err) {
+        alert.textContent = 'Connection error: Is the Java server running?';
+        alert.className = 'alert alert-error show';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Passenger Account →';
+      }
+    });
+  </script>
+</body>
+</html>

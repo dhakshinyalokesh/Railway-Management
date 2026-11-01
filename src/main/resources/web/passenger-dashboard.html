@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070f1e">
+  <title>Payanam Junction — Passenger Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+  <!-- Dashboard Header -->
+  <header class="dashboard-header">
+    <a class="brand" href="/passenger-dashboard.html">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-copy"><strong>PAYANAM</strong><small>PASSENGER PORTAL</small></span>
+    </a>
+    <div class="header-user-meta">
+      <div class="user-badge">
+        <span id="headerUserName">Passenger</span>
+        <span class="role-tag role-passenger" id="headerUserRole">PASSENGER</span>
+      </div>
+      <button class="btn-logout" id="logoutBtn" type="button">Logout ⎋</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="dashboard-container">
+    <div class="page-intro">
+      <div>
+        <h1>Welcome, <span id="welcomeName">Passenger</span></h1>
+        <p>Search schedules, reserve train seats, and manage your tickets.</p>
+      </div>
+      <div>
+        <button class="btn-secondary btn-sm" id="refreshBtn" type="button">Refresh Data ↻</button>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <section class="stats-grid" aria-label="Passenger Overview">
+      <article class="stat-card">
+        <div class="stat-title">Active Services</div>
+        <div class="stat-value" id="statTrainCount">—</div>
+        <div class="stat-subtitle">Scheduled trains today</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">My Confirmed Tickets</div>
+        <div class="stat-value" id="statMyConfirmed" style="color: var(--success);">—</div>
+        <div class="stat-subtitle">Ready to travel</div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-title">My Waitlist Tickets</div>
+        <div class="stat-value" id="statMyWaiting" style="color: var(--warning);">—</div>
+        <div class="stat-subtitle">Awaiting seat allocation</div>
+      </article>
+    </section>
+
+    <!-- 2 Column Section: Train Schedules & Book Seat Form -->
+    <div class="grid-2col" style="margin-bottom: 2rem;">
+      <!-- Train Schedules -->
+      <section class="panel" style="margin-bottom: 0;">
+        <div class="panel-header">
+          <h2 class="panel-title">Available Train Services</h2>
+          <span style="font-size: 0.8rem; color: var(--text-dim);" id="trainCountLabel"></span>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Train / Service</th>
+                <th>Arrival</th>
+                <th>Departure</th>
+                <th>Available</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="trainRows">
+              <tr><td colspan="5" class="empty-box">Loading trains…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Book Seat Form -->
+      <section class="panel" style="margin-bottom: 0;" id="bookingSection">
+        <div class="panel-header">
+          <h2 class="panel-title">Book a Ticket</h2>
+          <span class="badge badge-info">Instant Booking</span>
+        </div>
+        <div class="alert" id="bookingAlert" role="alert"></div>
+        <form id="passengerBookingForm">
+          <div class="form-group">
+            <label for="bookingPassengerName">Passenger Name</label>
+            <div class="input-group">
+              <input id="bookingPassengerName" name="passengerName" type="text" placeholder="Enter traveler's name" required maxlength="80">
+            </div>
+            <small style="color: var(--text-dim); font-size: 0.75rem; margin-top: 0.2rem; display: block;">Pre-filled from your profile. You can change this if booking for family.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="bookingTrainSelect">Select Train Service</label>
+            <select id="bookingTrainSelect" name="trainId" required>
+              <option value="">Choose a train…</option>
+            </select>
+          </div>
+
+          <div id="selectedTrainDetails" style="background: var(--bg-card); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1.25rem; font-size: 0.85rem; border: 1px solid var(--border-color); display: none;">
+            <!-- Injected by JS -->
+          </div>
+
+          <button class="btn-primary btn-full" type="submit" id="bookSubmitBtn">
+            Confirm Reservation <span>→</span>
+          </button>
+        </form>
+      </section>
+    </div>
+
+    <!-- My Bookings Section -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">My Bookings & Reservations</h2>
+        <span class="badge badge-info" id="myBookingBadge">0 tickets</span>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket #</th>
+              <th>Passenger</th>
+              <th>Train</th>
+              <th>Schedule</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="myBookingRows">
+            <tr><td colspan="6" class="empty-box">Loading your bookings…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/auth.js"></script>
+  <script src="/passenger.js"></script>
+</body>
+</html>

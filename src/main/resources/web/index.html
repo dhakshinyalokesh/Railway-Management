@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B192C">
+  <title>Payanam Junction — Railway reservations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Payanam Junction home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-copy"><strong>PAYANAM</strong><small>JUNCTION RAIL</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="active" href="#overview">Overview</a>
+      <a href="#services">Train services</a>
+      <a href="#trains">Timetable</a>
+      <a href="#platforms">Platforms</a>
+      <a href="#bookings">Reservations</a>
+    </nav>
+    <div class="header-meta"><span class="service-live"><i></i> LIVE SERVICE</span><span class="today-label" id="todayLabel"></span></div>
+  </header>
+
+  <main id="top">
+    <section class="hero" id="overview" aria-labelledby="heroTitle">
+      <div class="hero-atmosphere" aria-hidden="true">
+        <div class="mesh-orb orb-one"></div><div class="mesh-orb orb-two"></div>
+        <svg class="rail-map" viewBox="0 0 620 430" fill="none"><path d="M620 40H390C305 40 300 124 300 180s-28 93-91 93H86C31 273 0 310 0 365"/><path d="M620 69H407C325 69 325 137 325 187s-31 118-115 118H101C55 305 28 330 28 380"/><circle cx="300" cy="180" r="7"/><circle cx="210" cy="273" r="7"/><circle cx="28" cy="380" r="7"/></svg>
+        <div class="hero-coordinate">SOUTHERN LINE <span>09° 58′ N · 78° 07′ E</span></div>
+      </div>
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> YOUR JOURNEY STARTS HERE</div>
+        <h1 id="heroTitle">Make room<br>for <em>the journey.</em></h1>
+        <p>Simple, thoughtful reservations from the heart of Payanam Junction.</p>
+        <div class="hero-points"><span><b>01</b> Local service board</span><span><b>02</b> Instant seat status</span></div>
+      </div>
+
+      <article class="booking-card" id="bookingPanel" aria-labelledby="bookingTitle">
+        <div class="booking-card-top"><div><span class="card-kicker">PASSENGER DESK <span>·</span> 01</span><h2 id="bookingTitle">Reserve your seat</h2></div><span class="ticket-icon" aria-hidden="true">✳</span></div>
+        <p class="booking-intro">Choose a service and we’ll take care of the rest.</p>
+        <form id="bookingForm">
+          <label for="passengerName">Passenger name</label>
+          <div class="input-wrap"><span class="input-icon person-icon" aria-hidden="true">◎</span><input id="passengerName" name="passengerName" placeholder="Enter passenger name" maxlength="80" required autocomplete="name"></div>
+          <label for="trainSelect">Train service</label>
+          <div class="input-wrap select-wrap"><span class="input-icon route-icon" aria-hidden="true">↗</span><select id="trainSelect" name="trainId" required><option value="">Select a service</option></select></div>
+          <div class="selected-train" id="selectedTrainInfo"><span class="selected-icon">↗</span><span><strong>Select a train</strong><small>Arrival and available seats will appear here</small></span></div>
+          <button class="primary-button full-button" type="submit">Confirm reservation <span aria-hidden="true">→</span></button>
+          <div class="form-message" id="formMessage" role="status"></div>
+        </form>
+        <div class="secure-note"><span aria-hidden="true">✓</span> Your reservation is saved to the station database</div>
+      </article>
+      <div class="hero-bottomline"><span>PAYANAM JUNCTION <b>—</b> CENTRAL RAILWAY STATION</span><span>ARRIVE · BOARD · DEPART</span></div>
+    </section>
+
+    <section class="stats-grid" aria-label="Station summary">
+      <article class="stat-card"><div class="stat-top"><span class="stat-title">Train services</span><span class="stat-index">01</span></div><div class="stat-value" id="trainCount">—</div><div class="stat-foot"><i></i> Scheduled today</div></article>
+      <article class="stat-card"><div class="stat-top"><span class="stat-title">Confirmed seats</span><span class="stat-index">02</span></div><div class="stat-value" id="confirmedCount">—</div><div class="stat-foot">Across all services</div></article>
+      <article class="stat-card"><div class="stat-top"><span class="stat-title">Seats available</span><span class="stat-index">03</span></div><div class="stat-value" id="availableCount">—</div><div class="stat-foot">Ready to reserve</div></article>
+      <article class="stat-card waiting-stat"><div class="stat-top"><span class="stat-title">Waiting list</span><span class="stat-index">04</span></div><div class="stat-value" id="waitingCount">—</div><div class="stat-foot">Passengers in queue</div></article>
+    </section>
+
+    <section class="services-section" id="services" aria-labelledby="servicesTitle">
+      <div class="section-heading"><div><div class="eyebrow dark-eyebrow">FIND YOUR NEXT DEPARTURE</div><h2 id="servicesTitle">Services from Payanam</h2><p>Explore the trains scheduled at this station.</p></div><a class="quiet-link" href="#trains">View full timetable <span>↗</span></a></div>
+      <div class="service-grid" id="popularRoutes"><article class="service-placeholder">Loading scheduled services…</article></div>
+    </section>
+
+    <section class="panel train-panel" id="trains" aria-labelledby="timetableTitle">
+      <div class="panel-heading"><div><div class="eyebrow dark-eyebrow">PLATFORM CONTROL</div><h2 id="timetableTitle">Today's timetable</h2></div><div class="heading-actions"><span class="board-live"><i></i> LIVE BOARD</span><button class="text-button" id="refreshButton">Refresh <span>↻</span></button></div></div>
+      <div class="table-wrap"><table><thead><tr><th>TRAIN / SERVICE</th><th>ARRIVAL</th><th>DEPARTURE</th><th>SEATS</th><th>STATUS</th><th></th></tr></thead><tbody id="trainRows"><tr><td colspan="6" class="loading">Loading train services…</td></tr></tbody></table></div>
+      <div class="panel-foot"><span id="trainFoot">Showing scheduled services</span><span class="legend"><i></i> Connected to station desk</span></div>
+    </section>
+
+    <section class="panel platform-panel" id="platforms" aria-labelledby="platformTitle">
+      <div class="panel-heading"><div><div class="eyebrow dark-eyebrow">LENGTH · PRIORITY · CLEARANCE</div><h2 id="platformTitle">Platform operations</h2><p class="platform-summary">Queue arrivals, allocate compatible platforms, manage delays, and advance station time.</p></div><div class="station-clock"><span>STATION TIME</span><strong id="stationTime">00:00</strong></div></div>
+      <div class="station-ops-grid">
+        <form class="ops-card" id="platformRequestForm">
+          <div class="ops-card-title"><span>01 / REQUEST A PLATFORM</span><span>FIFO / PRIORITY QUEUE</span></div>
+          <label for="platformTrainSelect">Train service</label>
+          <select id="platformTrainSelect" name="trainId" required><option value="">Choose a train</option></select>
+          <label for="requestTypeSelect">Request type</label>
+          <select id="requestTypeSelect" name="requestType"><option value="SCHEDULED">Scheduled arrival</option><option value="CONNECTION">Connecting train</option><option value="EMERGENCY">Emergency arrival</option></select>
+          <div class="ops-button-row"><button class="primary-button" type="submit">Add to queue <span>→</span></button><button class="secondary-button" id="allocatePlatformButton" type="button">Allocate next</button></div>
+          <div class="ops-message" id="platformMessage" role="status"></div>
+        </form>
+        <div class="ops-card">
+          <div class="ops-card-title"><span>02 / STATION CLOCK</span><span>RELEASE MIN-HEAP</span></div>
+          <p>Advance time to release platform reservations after the clearance buffer.</p>
+          <form class="clock-form" id="stationTimeForm"><label for="advanceMinutes">Advance by</label><input id="advanceMinutes" name="minutes" type="number" min="1" value="10" required><span>minutes</span><button class="secondary-button" type="submit">Advance time</button></form>
+        </div>
+      </div>
+      <form class="ops-card train-controls" id="trainControlForm">
+        <div class="ops-card-title"><span>03 / TRAIN CONTROLS</span><span>DELAY CHECK · PRIORITY UPDATE</span></div>
+        <div class="train-control-fields">
+          <label for="controlTrainSelect">Train<select id="controlTrainSelect" name="trainId" required><option value="">Choose a train</option></select></label>
+          <label for="delayMinutes">Delay<input id="delayMinutes" name="minutes" type="number" min="1" value="10" required></label>
+          <button class="secondary-button" id="applyDelayButton" type="button">Apply delay</button>
+          <label for="prioritySelect">Declared priority<select id="prioritySelect" name="priority"><option value="1">1 · Standard</option><option value="2">2 · Elevated</option><option value="3">3 · High</option><option value="4">4 · Urgent</option><option value="5">5 · Highest</option></select></label>
+          <button class="secondary-button" id="applyPriorityButton" type="button">Update priority</button>
+        </div>
+      </form>
+      <div class="platform-grid" id="platformCards"><div class="empty-state">Loading platform plan…</div></div>
+      <div class="queue-heading"><div><span class="eyebrow dark-eyebrow">COMPETING ARRIVALS</span><h3>Waiting platform requests</h3></div><span class="count-badge" id="platformQueueBadge">0 queued</span></div>
+      <div class="platform-queue" id="platformQueue"><div class="empty-state">No pending platform requests.</div></div>
+      <div class="table-wrap platform-table-wrap"><table><thead><tr><th>TRAIN / LENGTH</th><th>ARRIVAL</th><th>DEPARTURE</th><th>PLATFORM</th><th>CLEARANCE</th><th>STATUS / ACTION</th></tr></thead><tbody id="platformRows"><tr><td colspan="6" class="loading">Loading platform timetable…</td></tr></tbody></table></div>
+      <div class="panel-foot"><span id="platformFoot">Three platforms · 10 minute clearance buffer</span><span class="legend"><i></i> Conflict-checked schedule</span></div>
+    </section>
+
+    <section class="panel reservations-panel" id="bookings" aria-labelledby="reservationsTitle">
+      <div class="panel-heading"><div><div class="eyebrow dark-eyebrow">PASSENGER ACTIVITY</div><h2 id="reservationsTitle">Recent reservations</h2></div><span class="count-badge" id="reservationBadge">0 active</span></div>
+      <div class="reservation-list" id="bookingRows"><div class="empty-state">Loading reservations…</div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-copy"><strong>PAYANAM</strong><small>JUNCTION RAIL</small></span></a><span>STATION MANAGEMENT DEMO</span><span>BUILT FOR CENTRAL RAILWAY STATION</span></footer>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
